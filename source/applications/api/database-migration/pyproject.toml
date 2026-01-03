@@ -1,0 +1,65 @@
+[project]
+name = "database-migration"
+version = "0.2.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "core==0.2.0",
+    "domain==0.2.0",
+    "database==0.2.0",
+    "file-database==0.2.0",
+    "config-database==0.2.0",
+    "project-database==0.2.0",
+    "validation-database==0.2.0",
+    "hippo-rag-database==0.2.0",
+    "fact-store-database==0.2.0",
+    "deployment-base==0.2.0",
+]
+authors = [
+    { name = "Fabian Engel", email = "git-fabian-engel@proton.me" },
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.database]
+workspace = true
+
+[tool.uv.sources.validation-database]
+workspace = true
+
+[tool.uv.sources.config-database]
+workspace = true
+
+[tool.uv.sources.file-database]
+workspace = true
+
+[tool.uv.sources.project-database]
+workspace = true
+
+[tool.uv.sources.hippo-rag-database]
+workspace = true
+
+[tool.uv.sources.fact-store-database]
+workspace = true
+
+[tool.uv.sources.ollama-client]
+workspace = true
+
+[tool.uv.sources.deployment-base]
+workspace = true
+
+[tool.aerich]
+tortoise_orm = "aerich_conf.TORTOISE_ORM"
+location = "migrations"
+src_folder = "./."
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"

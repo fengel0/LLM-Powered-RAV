@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100 dark:bg-gray-900">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {darkMode: 'class'};
+  </script>
+  <title>Chatbot</title>
+
+  <script type="text/javascript" src="{{root_path}}/static/js/tailwind.js"></script>
+
+  <!-- Inject API hosts, configs, and projects from FastAPI -->
+  <script>
+    window.API_HOSTS = {{APIHosts | tojson}};
+    window.APP_CONFIGS = {{configs | tojson}};
+    window.PROJECTS = {{projects | tojson}};
+    window.PATH_PREFIX = {{root_path | tojson}};
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col h-full">
+  <!-- HEADER -->
+  <header
+    class="flex items-center justify-between gap-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 shadow-sm z-10">
+    <div class="flex items-center gap-4 flex-wrap">
+
+      <button id="menuToggle"
+        class="block md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
+        &#9776;
+      </button>
+
+      <!-- API Base URL -->
+      <div class="flex flex-col gap-1">
+        <label for="apiUrlSelect" class="text-xs text-gray-500 dark:text-gray-400">API Base URL</label>
+        <select id="apiUrlSelect"
+          class="w-48 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+      </div>
+
+      <!-- Model Select -->
+      <div class="flex flex-col gap-1">
+        <label for="modelSelect" class="text-xs text-gray-500 dark:text-gray-400">Model</label>
+        <select id="modelSelect"
+          class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+      </div>
+
+      <!-- Config Select -->
+      <div class="flex flex-col gap-1">
+        <label for="configSelect" class="text-xs text-gray-500 dark:text-gray-400">Config</label>
+        <select id="configSelect"
+          class="min-w-[12rem] px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+      </div>
+
+      <!-- Project Select -->
+      <div class="flex flex-col gap-1">
+        <label for="projectSelect" class="text-xs text-gray-500 dark:text-gray-400">Project</label>
+        <select id="projectSelect"
+          class="min-w-[12rem] px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+      </div>
+
+      <!-- Options -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs text-gray-500 dark:text-gray-400">Options</label>
+        <div class="flex items-center gap-2">
+        </div>
+      </div>
+
+      <button id="fetchModels"
+        class="ml-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Fetch Models
+      </button>
+
+      <button id="showConfigBtn"
+        class="ml-2 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+        Show Config
+      </button>
+    </div>
+
+    <button id="themeToggle"
+      class="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 3v1m0 16v1m8.485-12.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+      </svg>
+      <span id="themeLabel" class="hidden md:block text-xs">Light Mode</span>
+    </button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="flex flex-1 h-full overflow-hidden">
+    <aside id="sidebar"
+      class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform transform md:translate-x-0">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Conversations</h2>
+        <button id="newChatBtn"
+          class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          + New Chat
+        </button>
+      </div>
+      <div id="convoList"
+        class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-gray-100"></div>
+    </aside>
+
+    <main class="flex-1 flex flex-col bg-white dark:bg-gray-800">
+      <div
+        class="flex items-center px-4 py-3 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <input type="text" id="conversationTitle" placeholder="Conversation Name"
+          class="w-full text-xl font-semibold text-gray-900 dark:text-gray-100 bg-transparent focus:outline-none focus:ring-0" />
+      </div>
+
+      <div id="messages"
+        class="flex flex-col flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-white dark:bg-gray-800 dark:text-gray-100">
+      </div>
+
+      <div id="status"
+        class="px-4 py-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300">
+        Ready
+      </div>
+
+      <div
+        class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+        <input type="text" id="messageInput" placeholder="Type your message..." maxlength="1000"
+          class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <button id="sendButton"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Send
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- CONFIG MODAL -->
+  <div id="configOverlay" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Application Config</h3>
+        <button id="closeConfig"
+          class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xl">&times;</button>
+      </div>
+      <pre id="configContent"
+        class="text-xs text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-900 p-3 rounded overflow-auto max-h-[70vh] whitespace-pre-wrap">
+      </pre>
+    </div>
+  </div>
+
+  <!-- JS --><!-- index.js has no imports: classic script -->
+  <!--<script src="{{root_path}}/static/js/index.js"></script>-->
+  <script type="module" src="{{root_path}}/static/js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+[project]
+name = "file-index-prefect"
+version = "0.2.0"
+description = ""
+authors = [{ name = "Fabian Engel", email = "git-fabian-engel@proton.me" }]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "file-converter-prefect",
+  "file-embedding-prefect",
+  "file-uploader-prefect",
+]
+
+[project.optional-dependencies]
+test = []
+
+[tool.uv.sources]
+file-converter-prefect = { workspace = true }
+file-embedding-prefect = { workspace = true }
+file-uploader-prefect = { workspace = true }
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

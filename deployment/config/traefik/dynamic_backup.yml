@@ -1,0 +1,38 @@
+http:
+  routers:
+    ollam-router:
+      rule: PathPrefix(`/`)
+      entryPoints:
+        - web
+      service: ollam-app
+
+  services:
+    ollam-app:
+      loadBalancer:
+        passHostHeader: false
+        healthCheck:
+          path: /
+          interval: 10s
+          timeout: 3s
+          followRedirects: true
+        servers:
+          - url: "http://192.168.83.3:11434"
+            weight: 2
+          - url: "http://192.168.83.4:11434"
+            weight: 2
+          - url: "http://192.168.83.5:11434"
+            weight: 2
+          #- url: "http://192.168.83.6:11434"
+            #weight: 2
+          - url: "http://192.168.83.17:11434"
+            weight: 1
+          - url: "http://192.168.83.18:11434"
+            weight: 2
+          - url: "http://192.168.83.19:11434"
+            weight: 2
+          - url: "http://192.168.83.20:11434"
+            weight: 2
+          #- url: "http://192.168.83.188:11434"
+            #weight: 1
+          - url: "https://mokitul.ai.fh-erfurt.de"
+            weight: 2

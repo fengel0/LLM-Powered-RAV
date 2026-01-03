@@ -1,0 +1,46 @@
+{
+  "id": "e93f83eb-d3ad-4211-ab88-fdf955ed0fa3",
+  "stored_config": {
+    "id": "e93f83eb-d3ad-4211-ab88-fdf955ed0fa3",
+    "hash": "1fcb450b5e6ac1a5621d998f8f00e911cad8ebd901f982fa56bdf904d1b1be05-7bc880713be20a7eac110b2b3ab73e808bbac7622fac797626085c9fd9da98c3",
+    "name": "hippo-rag-undirected-R10-1024-norm",
+    "config_type": "hippo-rag",
+    "embedding": {
+      "id": "b1b6e50f-5919-4ca0-9973-7a6c03dde716",
+      "hash": "1fcb450b5e6ac1a5621d998f8f00e911cad8ebd901f982fa56bdf904d1b1be05",
+      "chunk_size": 1024,
+      "chunk_overlap": 128,
+      "models": {
+        "OPENAI_MODEL": "gpt-oss:120b",
+        "EMBEDDING_MODEL": "Qwen/Qwen3-Embedding-4B"
+      },
+      "addition_information": {
+        "TRUNCATE": false,
+        "TEMPERATUR": 0.0,
+        "EMBEDDING_SIZE": 2560,
+        "EMEDDING_NORMALIZE": true,
+        "TRUNCATE_DIRECTION": "left",
+        "SYNONYME_EDEGE_TOP_N": 10,
+        "EMBEDDING_DOC_PROMPT_NAME": "document",
+        "EMBEDDING_QUERY_PROMPT_NAME": "query",
+        "SYNONYMY_EDGE_SIM_THRESHOLD": 0.9
+      }
+    },
+    "retrieval_config": {
+      "id": "c3226cc0-3e3a-4e07-9a82-c2c1e6b8b0d5",
+      "hash": "7bc880713be20a7eac110b2b3ab73e808bbac7622fac797626085c9fd9da98c3",
+      "generator_model": "deepseek-r1:70b",
+      "temp": 0.0,
+      "prompts": {},
+      "addition_information": {
+        "TOP_N_HIPPO_RAG": 10,
+        "TOP_N_LINKINIG": 10,
+        "QA_TOP_N": 10,
+        "PASSAGE_NODE_WEIGHT": 0.3,
+        "DAMPING": 0.15,
+        "CHUNKS_TO_RETRIEVE_PPR_SEED": 100,
+        "PPR_DIRECTED": "False"
+      }
+    }
+  }
+}

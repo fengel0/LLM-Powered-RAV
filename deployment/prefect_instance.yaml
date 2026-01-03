@@ -1,0 +1,57 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  prometheus-prefect-exporter-v02:
+    image: prefecthq/prometheus-prefect-exporter:latest
+    container_name: prefect-exporter-masterarbeit-v02
+    restart: unless-stopped
+    ports:
+      - "9876:8000"
+    networks:
+      - dev_env
+    environment:
+      PREFECT_API_URL: ${PREFECT_API_URL}
+
+  prefect-server-v02:
+    image: prefecthq/prefect:3-latest
+    container_name: prefect-masterarbeit-v02
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+      - "4201:4201"
+    restart: unless-stopped
+    environment:
+      PREFECT_SERVER_API_HOST: "0.0.0.0"
+      PREFECT_API_URL: ${PREFECT_API_URL_EXTERNAL}
+      PREFECT_API_DATABASE_CONNECTION_URL: "postgresql+asyncpg://${POSTGRES_PREFECT_USER}:${POSTGRES_PREFECT_PASSWORD}@postgres-prefect-masterarbeit-v02:5432/prefect"
+    networks:
+      - dev_env
+  postgres-prefect-masterarbeit-v02:
+    image: postgres:16.3-alpine
+    container_name: postgres-prefect-masterarbeit-v02
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: ${POSTGRES_PREFECT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PREFECT_PASSWORD}
+      POSTGRES_DB: prefect
+    volumes:
+      - ./disks/postgres-prefect-data-masterarbeit:/var/lib/postgresql/data
+    tmpfs:
+      - /tmp
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev_env
+
+volumes:
+  prefect-data-masterarbeit:
+    driver: local
+

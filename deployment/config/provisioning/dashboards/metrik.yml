@@ -1,0 +1,61 @@
+apiVersion: 1
+
+providers:
+  - name: 'Minio'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/minio.json
+  - name: 'Qdrant'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/qdrant.json
+  - name: 'Text Embedding Inferance'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/text-embeddings-inferance.json
+  - name: 'OTEL'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/otel.json
+  - name: 'Postgres'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/postgres.json
+  - name: 'Prefect Overview'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/prefect_overview.json
+  - name: 'Prefect Flow Runs'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/prefect_flow_runs.json
+  - name: 'FastAPI Apps'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/app.json
+  - name: 'Prefect Deployment'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/prefect_deployments.json
+  - name: 'Docker Container & Host Metrics'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/cadvisor.json
+  - name: 'Node Exporter'
+    orgId: 1
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/metrics/node-exporter.json
+      
+
+      

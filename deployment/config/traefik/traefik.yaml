@@ -1,0 +1,34 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+log:
+  level: INFO
+  format: common
+api:
+  dashboard: true
+  insecure: true
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: ":443"
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    filename: /etc/traefik/dynamic.yml
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+tracing:
+  otlp:
+    grpc:                  # use gRPC protocol (preferred for OTLP)
+      endpoint: "otel-collector:4317"   # address of your collector
+      insecure: true       # disable TLS if your collector’s endpoint is plain-text
+accessLog:
+  fields:
+    defaultMode: keep
+    headers:
+      defaultMode: drop

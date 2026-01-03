@@ -1,0 +1,58 @@
+[project]
+name = "file-converter-api"
+version = "0.2.0"
+description = ""
+authors = [
+    { name = "Fabian Engel", email = "git-fabian-engel@proton.me" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "core==0.2.0",
+    "domain==0.2.0",
+    "pdf-converter==0.2.0",
+    "word-converter==0.2.0",
+    "s3==0.2.0",
+    "fastapi-core==0.2.0",
+    "file-converter-service==0.2.0",
+    "deployment-base==0.2.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "testcontainers==4.13.2",
+    "domain-test==0.2.0",
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.pdf-converter]
+workspace = true
+
+[tool.uv.sources.word-converter]
+workspace = true
+
+[tool.uv.sources.s3]
+workspace = true
+
+[tool.uv.sources.fastapi-core]
+workspace = true
+
+[tool.uv.sources.file-converter-service]
+workspace = true
+
+[tool.uv.sources.deployment-base]
+workspace = true
+
+[tool.uv.sources.domain-test]
+workspace = true
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"

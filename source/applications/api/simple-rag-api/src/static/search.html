@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100 dark:bg-gray-900">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {darkMode: 'class'};
+  </script>
+
+  <title>RAG Search</title>
+
+  <script type="text/javascript" src="{{root_path}}/static/js/tailwind.js"></script>
+
+  <script>
+    window.API_HOSTS = {{APIHosts | tojson}};
+    window.APP_CONFIGS = {{configs | tojson}};
+    window.PROJECTS = {{projects | tojson}};
+    window.PATH_PREFIX = {{root_path | tojson}};
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+
+<body class="h-full flex flex-col">
+
+  <header class="p-4 bg-white dark:bg-gray-800 shadow flex items-center gap-4">
+    <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">RAG Search</h1>
+
+    <select id="apiHost"
+      class="px-2 py-1 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></select>
+    <select id="configSel"
+      class="px-2 py-1 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></select>
+    <select id="projectSel"
+      class="px-2 py-1 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></select>
+
+    <!-- Reranker Toggle -->
+    <label class="flex items-center gap-2 text-gray-800 dark:text-gray-100 text-sm">
+      <input type="checkbox" id="rerankerToggle" class="w-4 h-4" />
+      Reranker
+    </label>
+
+    <button id="themeToggle"
+      class="ml-auto px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm">
+      Toggle Theme
+    </button>
+  </header>
+
+  <main class="flex-1 overflow-auto p-6">
+
+    <!-- Search Spinner -->
+    <div id="searchSpinner" class="hidden flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-4">
+      <svg class="animate-spin h-5 w-5 text-blue-600" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <span>searching...</span>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="flex gap-2 mb-6">
+      <input id="queryInput" type="text" placeholder="Type a query..."
+        class="flex-1 px-3 py-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
+
+      <button id="searchBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+        Search
+      </button>
+    </div>
+
+    <!-- Results Grid -->
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow max-w-2xl w-full">
+      <h2 id="modalTitle" class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100"></h2>
+      <pre id="modalContent"
+        class="whitespace-pre-wrap text-sm bg-gray-50 dark:bg-gray-900 p-3 rounded text-gray-900 dark:text-gray-100 max-h-[60vh] overflow-auto">
+      </pre>
+      <div class="mt-4 flex justify-end">
+        <button id="modalClose" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------------------------------------------------------------
+       Basic Setup
+    --------------------------------------------------------------- */
+    const apiSel = document.getElementById("apiHost");
+    const projectSel = document.getElementById("projectSel");
+    const themeBtn = document.getElementById("themeToggle");
+    const grid = document.getElementById("grid");
+
+    window.API_HOSTS.forEach(h => {
+      const o = document.createElement("option");
+      o.value = h;
+      o.textContent = h;
+      apiSel.appendChild(o);
+    });
+
+
+    // ---------- CONFIGS ----------
+    const configSel = document.getElementById("configSel");
+    const configMap = new Map();
+    const configNameCounts = new Map();
+
+    console.log("APP_CONFIGS:", window.APP_CONFIGS);
+
+    if (Array.isArray(window.APP_CONFIGS)) {
+      window.APP_CONFIGS.forEach(entry => {
+        if (!entry || typeof entry !== "object") return;
+
+        const [id, cfg] = Object.entries(entry)[0];
+        if (!id || !cfg) return;
+
+        const name = (cfg.name || "").trim();
+        const nm = name || id;
+
+        configMap.set(id, cfg);
+        configNameCounts.set(nm, (configNameCounts.get(nm) || 0) + 1);
+      });
+    }
+
+    if (configSel) {
+      if (configMap.size === 0) {
+        configSel.innerHTML = `<option value="" disabled selected>No configs</option>`;
+      } else {
+        const options = Array.from(configMap.entries()).map(([id, cfg]) => {
+          const rawName = (cfg.name || "").trim() || id;
+          const needsDisamb = (configNameCounts.get(rawName) || 0) > 1;
+          const label = needsDisamb ? `${rawName} (${id})` : rawName;
+          return `<option value="${id}">${label}</option>`;
+        });
+        configSel.innerHTML = options.join("");
+      }
+    }
+
+    function getCurrentConfigId() {
+      return configSel?.value || null;
+    }
+
+    function getCurrentConfig() {
+      const id = getCurrentConfigId();
+      return id ? configMap.get(id) : null;
+    }
+
+    configSel?.addEventListener("change", () => {
+      document.dispatchEvent(new CustomEvent("config-changed", {
+        detail: {id: getCurrentConfigId(), config: getCurrentConfig()}
+      }));
+    });
+
+
+    // ---------- PROJECTS ----------
+    window.PROJECTS.forEach(p => {
+      const o = document.createElement("option");
+      o.value = p[0];
+      o.textContent = p[1];
+      projectSel.appendChild(o);
+    });
+
+    themeBtn.onclick = () => {
+      document.documentElement.classList.toggle("dark");
+    };
+
+
+    /* ---------------------------------------------------------------
+       Search
+    --------------------------------------------------------------- */
+    const spinner = document.getElementById("searchSpinner");
+    const rerankerToggle = document.getElementById("rerankerToggle");
+
+    document.getElementById("searchBtn").onclick = async () => {
+      const query = document.getElementById("queryInput").value.trim();
+      if (!query) return;
+
+      const payload = {
+        query,
+        enable_reranker: rerankerToggle.checked,
+        config_id: configSel.value || null,
+        project_id: projectSel.value || null
+      };
+
+      const endpoint = `${apiSel.value}/query`;
+
+      spinner.classList.remove("hidden");
+      grid.innerHTML = "";
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("Search failed");
+
+        const data = await res.json();
+        showGrid(data.nodes || []);
+
+      } catch (err) {
+        grid.innerHTML = `<div class='text-red-500'>${err}</div>`;
+      } finally {
+        spinner.classList.add("hidden");
+      }
+    };
+
+    document.getElementById("queryInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        document.getElementById("searchBtn").click();
+      }
+    });
+
+
+    /* ---------------------------------------------------------------
+       Render Grid
+    --------------------------------------------------------------- */
+    function showGrid(nodes) {
+      grid.innerHTML = "";
+
+      nodes.forEach(node => {
+        const div = document.createElement("div");
+        div.className =
+          "p-4 bg-white dark:bg-gray-700 rounded shadow cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600";
+
+        const preview = node.content.length > 100
+          ? node.content.slice(0, 100) + "..."
+          : node.content;
+
+        div.innerHTML = `
+          <div class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Score: ${node.similarity.toFixed(4)}</div>
+          <div class="text-sm text-gray-700 dark:text-gray-300">${preview}</div>
+        `;
+
+        div.onclick = () => openModal(node);
+        grid.appendChild(div);
+      });
+    }
+
+    /* ---------------------------------------------------------------
+       Modal
+    --------------------------------------------------------------- */
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalContent = document.getElementById("modalContent");
+    const modalClose = document.getElementById("modalClose");
+
+    function openModal(node) {
+      modalTitle.textContent = `Node ${node.id} (Score: ${node.similarity.toFixed(4)})`;
+      modalContent.textContent = node.content;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    modalClose.onclick = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+  </script>
+
+</body>
+
+</html>

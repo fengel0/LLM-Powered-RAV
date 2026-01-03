@@ -1,0 +1,36 @@
+[project]
+name = "llama-index-extension"
+version = "0.2.0"
+description = ""
+authors = [{ name = "Fabian Engel", email = "git-fabian-engel@proton.me" }]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "domain==0.2.0",
+  "text-embedding==0.2.0",
+  "pydantic==2.11.10",
+  "qdrant-client==1.15.1",
+  "llama-index==0.12.52",
+  "llama-index-vector-stores-qdrant==0.6.1",
+  "fastembed==0.7.3",
+  "traceloop-sdk==0.40.14",
+  "pysbd==0.3.4",
+  "tiktoken==0.12.0",
+  "llama-index-llms-openai==0.4.7",
+]
+
+[project.optional-dependencies]
+test = ["testcontainers==4.13.2", "domain-test==0.2.0"]
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.text-embedding]
+workspace = true
+
+[tool.uv.sources.domain-test]
+workspace = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

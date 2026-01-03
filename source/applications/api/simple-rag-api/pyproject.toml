@@ -1,0 +1,87 @@
+[project]
+name = "simple-rag-api"
+version = "0.2.0"
+description = ""
+authors = [{ name = "Fabian Engel", email = "git-fabian-engel@proton.me" }]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "core==0.2.0",
+  "domain==0.2.0",
+  "vector-db==0.2.0",
+  "simple-rag==0.2.0",
+  "fastapi-core==0.2.0",
+  "text-embedding==0.2.0",
+  "simple-rag-service==0.2.0",
+  "llama-index-extension==0.2.0",
+  "config-database==0.2.0",
+  "hippo-rag==0.2.0",
+  "hippo-rag-database==0.2.0",
+  "hippo-rag-graph==0.2.0",
+  "hippo-rag-vectore-store==0.2.0",
+  "config-service==0.2.0",
+  "rest-client==0.2.0",
+  "jinja2==3.1.6",
+  "deployment-base==0.2.0",
+  "project-database==0.2.0",
+  "openai-client==0.2.0",
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.vector-db]
+workspace = true
+
+[tool.uv.sources.simple-rag]
+workspace = true
+
+[tool.uv.sources.fastapi-core]
+workspace = true
+
+[tool.uv.sources.text-embedding]
+workspace = true
+
+[tool.uv.sources.simple-rag-service]
+workspace = true
+
+[tool.uv.sources.llama-index-extension]
+workspace = true
+
+[tool.uv.sources.config-database]
+workspace = true
+
+[tool.uv.sources.hippo-rag]
+workspace = true
+
+[tool.uv.sources.hippo-rag-database]
+workspace = true
+
+[tool.uv.sources.hippo-rag-graph]
+workspace = true
+
+[tool.uv.sources.hippo-rag-vectore-store]
+workspace = true
+
+[tool.uv.sources.config-service]
+workspace = true
+
+
+[tool.uv.sources.rest-client]
+workspace = true
+
+[tool.uv.sources.deployment-base]
+workspace = true
+
+[tool.uv.sources.project-database]
+workspace = true
+
+[tool.uv.sources.openai-client]
+workspace = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

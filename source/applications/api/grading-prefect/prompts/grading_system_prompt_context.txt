@@ -1,0 +1,1 @@
+Context: The exam uses short answers with explicit steps. Prioritize evidence in the student response and penalize hallucinated claims.

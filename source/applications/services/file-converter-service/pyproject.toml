@@ -1,0 +1,33 @@
+[project]
+name = "file-converter-service"
+version = "0.2.0"
+description = ""
+authors = [
+    { name = "Fabian Engel", email = "git-fabian-engel@proton.me" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "core==0.2.0",
+    "domain==0.2.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "domain-test==0.2.0",
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.domain-test]
+workspace = true
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"

@@ -1,0 +1,1 @@
+Grade for mathematical correctness. Validate computations, logic, and final answers. Use a 0–100 scale and explain deductions briefly.

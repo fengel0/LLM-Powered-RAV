@@ -1,0 +1,35 @@
+[project]
+name = "fastapi-core"
+version = "0.2.0"
+description = ""
+authors = [
+    { name = "Fabian Engel", email = "git-fabian-engel@proton.me" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pydantic==2.11.10",
+    "opentelemetry-sdk==1.32.1",
+    "fastapi==0.115.14",
+    "prometheus-fastapi-instrumentator==7.1.0",
+    "core==0.2.0",
+    "opentelemetry-distro==0.53b1",
+    "opentelemetry-instrumentation-fastapi==0.53b1",
+    "opentelemetry-exporter-otlp-proto-grpc==1.32.1",
+    "opentelemetry-api==1.32.1",
+    "uvicorn==0.34.3",
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/fastapi_core",
+]
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"

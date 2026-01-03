@@ -1,0 +1,175 @@
+import json
+from domain.hippo_rag.model import Triple
+import re
+
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+
+def fix_broken_generated_json(json_str: str) -> str:
+    """
+    Fixes a malformed JSON string by:
+    - Removing the last comma and any trailing content.
+    - Iterating over the JSON string once to determine and fix unclosed braces or brackets.
+    - Ensuring braces and brackets inside string literals are not considered.
+
+    If the original json_str string can be successfully loaded by json.loads(), will directly return it without any modification.
+
+    Args:
+        json_str (str): The malformed JSON string to be fixed.
+
+    Returns:
+        str: The corrected JSON string.
+    """
+
+    def find_unclosed(json_str: str) -> list[str]:
+        """
+        Identifies the unclosed braces and brackets in the JSON string.
+
+        Args:
+            json_str (str): The JSON string to analyze.
+
+        Returns:
+            list: A list of unclosed elements in the order they were opened.
+        """
+        unclosed: list[str] = []
+        inside_string = False
+        escape_next = False
+
+        for char in json_str:
+            if inside_string:
+                if escape_next:
+                    escape_next = False
+                elif char == "\\":
+                    escape_next = True
+                elif char == '"':
+                    inside_string = False
+            else:
+                if char == '"':
+                    inside_string = True
+                elif char in "{[":
+                    unclosed.append(char)
+                elif char in "}]":
+                    if unclosed and (
+                        (char == "}" and unclosed[-1] == "{")
+                        or (char == "]" and unclosed[-1] == "[")
+                    ):
+                        unclosed.pop()
+
+        return unclosed
+
+    try:
+        # Try to load the JSON to see if it is valid
+        json.loads(json_str)
+        return json_str  # Return as-is if valid
+    except json.JSONDecodeError as e:
+        logger.warning(f"faild fixing json {e}", exc_info=True)
+        pass
+
+    # Step 1: Remove trailing content after the last comma.
+    last_comma_index = json_str.rfind(",")
+    if last_comma_index != -1:
+        json_str = json_str[:last_comma_index]
+
+    # Step 2: Identify unclosed braces and brackets.
+    unclosed_elements = find_unclosed(json_str)
+
+    # Step 3: Append the necessary closing elements in reverse order of opening.
+    closing_map = {"{": "}", "[": "]"}
+    for open_char in reversed(unclosed_elements):
+        json_str += closing_map[open_char]
+
+    return json_str
+
+
+def convert_format_to_template(
+    original_string: str,
+    placeholder_mapping: dict[str, str] | None = None,
+    static_values: dict[str, str | int | float] | None = None,
+) -> str:
+    """
+    Converts a .format() style string to a Template-style string.
+
+    Args:
+        original_string (str): The original string using .format() placeholders.
+        placeholder_mapping (dict, optional): Mapping from original placeholder names to new placeholder names.
+        static_values (dict, optional): Mapping from original placeholders to static values to be replaced in the new template.
+
+    Returns:
+        str: The converted string in Template-style format.
+    """
+    # Initialize mappings
+    placeholder_mapping = placeholder_mapping or {}
+    static_values = static_values or {}
+
+    # Regular expression to find .format() style placeholders
+    placeholder_pattern = re.compile(r"\{(\w+)\}")
+
+    # Substitute placeholders in the string
+    def replace_placeholder(match: re.Match[str]):
+        original_placeholder = match.group(1)
+
+        # If the placeholder is in static_values, substitute its value directly
+        if original_placeholder in static_values:
+            return str(static_values[original_placeholder])
+
+        # Otherwise, rename the placeholder if needed, or keep it as is
+        new_placeholder = placeholder_mapping.get(
+            original_placeholder, original_placeholder
+        )
+        return f"${{{new_placeholder}}}"
+
+    # Replace all placeholders
+    template_string = placeholder_pattern.sub(replace_placeholder, original_string)
+
+    return template_string
+
+
+def filter_invalid_triples(triples: list[list[str]]) -> list[Triple]:
+    """
+    Filters out invalid and duplicate triples from a list of triples.
+
+    A valid triple meets the following criteria:
+    1. It contains exactly three elements.
+    2. It is unique within the list (no duplicates in the output).
+
+    The function ensures:
+    - Each valid triple is converted to a list of strings.
+    - The order of unique, valid triples is preserved.
+    - Do not apply any text preprocessing techniques or rules within this function.
+
+    Args:
+        triples (List[List[str]]):
+            A list of triples (each a list of strings or elements that can be converted to strings).
+
+    Returns:
+        List[List[str]]:
+            A list of unique, valid triples, each represented as a list of strings.
+    """
+    unique_triples: set[Triple] = set()
+    valid_triples: list[Triple] = []
+
+    for triple in triples:
+        if len(triple) != 3:
+            continue  # Skip triples that do not have exactly 3 elements
+        skip = False
+        for entry in triple:
+            from hippo_rag.utils.misc_utils import text_processing_word
+
+            text = text_processing_word(entry)
+            if not text:
+                skip = True
+        if skip:
+            continue
+
+        v0 = triple[0]
+        v1 = triple[1]
+        v2 = triple[2]
+        valid_triple: Triple = (v0, v1, v2)
+        if tuple(valid_triple) not in unique_triples:
+            unique_triples.add(valid_triple)
+            valid_triples.append(valid_triple)
+
+    return valid_triples

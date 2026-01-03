@@ -1,0 +1,59 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  rag-prefrect-graph-undirected-v02-custom:
+    image: rag-prefect:v02
+    container_name: rag-prefrect-graph-masterarbeit-undirected-v02-custom
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      TZ: Europe/Berlin
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      RAG_TYPE: "hippo-rag"
+
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      RERANK_API_KEY: ${RERANK_API_KEY}
+      EMBEDD_CONFIG_TO_USE: "b1b6e50f-5919-4ca0-9973-7a6c03dde716"
+      RAG_CONFIG_NAME: "hippo-rag-undirected-R10-1024-norm"
+      LLM_REQUEST_TIMEOUT: ${LLM_REQUEST_TIMEOUT}
+
+      NEO4J_HOST: ${NEO4J_HOST}
+      NEO4J_USER: ${NEO4J_USER}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+
+      PARALLEL_REQUESTS: ${PARALLEL_REQUESTS_RAG}
+
+      OPENAI_HOST: ${OPENAI_HOST}
+
+      QDRANT_HOST: ${QDRANT_HOST}
+      QDRANT_PORT: ${QDRANT_PORT}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      QDRANT_GRPC_PORT: ${QDRANT_GRPC_PORT}
+      QDRANT_PREFER_GRPC: ${QDRANT_PREFER_GRPC}
+      VECTOR_COLLECTION: ${VECTOR_COLLECTION}
+      VECTOR_BATCH_SIZE: ${VECTOR_BATCH_SIZE}
+
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      EMBEDDING_HOST: ${EMBEDDING_HOST}
+      IS_EMBEDDING_HOST_SECURE: ${IS_EMBEDDING_HOST_SECURE}
+      RERANK_HOST: ${RERANK_HOST}
+
+
+      PREFECT_API_URL: ${PREFECT_API_URL}
+    volumes:
+      - ./prompts:/app/api/rag-prefect/src/prompts
+      - ./config/application_settings/graph_rag_custom_retrival_config.json:/app/api/rag-prefect/src/config/retrival_config.json
+      - ./config/application_settings/graph_rag_custom_config.json:/app/api/rag-prefect/src/config/rag_config.json
+

@@ -1,0 +1,59 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  file-converter-service-v02:
+    image: file-converter-api:v02
+    container_name: file-converter-api-masterarbeit-v02
+    networks:
+      - dev_env
+    #devices:
+      #- "nvidia.com/gpu=all"
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+      DEVICE: cpu
+      #DEVICE: ${DEVICE}
+      S3_HOST: ${S3_HOST}
+      S3_ACCESS_KEY: ${MINIO_USER}
+      S3_SECRET_KEY: ${MINIO_PASSWORD}
+      S3_SESSION_KEY: ${S3_SESSION_KEY}
+      S3_IS_SECURE: ${S3_IS_SECURE}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    #healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      #interval: 30s
+      #timeout: 5s
+      #retries: 3
+      #start_period: 10s
+    volumes:
+      - ./disks/file-converter-api-masterarbeit:/root/.cache
+
+  graph-view-v02:
+    image: graph-view
+    container_name: graph-view-masterarbeit-v02
+    ports:
+      - 9005:8000
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - dev_env
+

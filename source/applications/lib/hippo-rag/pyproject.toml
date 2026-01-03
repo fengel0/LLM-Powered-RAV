@@ -1,0 +1,73 @@
+[project]
+name = "hippo-rag"
+version = "0.2.0"
+description = ""
+authors = [{ name = "Fabian Engel", email = "git-fabian-engel@proton.me" }]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "core==0.2.0",
+  "domain==0.2.0",
+  "numpy==2.3.4",
+  "regex==2024.11.6",
+  "tqdm==4.67.1",
+]
+
+[project.optional-dependencies]
+test = [
+  "domain-test==0.2.0",
+  "hippo-rag-database==0.2.0",
+  "hippo-rag-graph==0.2.0",
+  "openai-client==0.2.0",
+  "hippo-rag-vectore-store==0.2.0",
+  "testcontainers==4.13.2",
+  "text-embedding==0.2.0",
+  "text-splitter==0.2.0",
+]
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.uv]
+required-environments = [
+  "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.database]
+workspace = true
+
+[tool.uv.sources.ollama-client]
+workspace = true
+
+[tool.uv.sources.domain-test]
+workspace = true
+
+[tool.uv.sources.hippo-rag-database]
+workspace = true
+
+[tool.uv.sources.hippo-rag-graph]
+workspace = true
+
+[tool.uv.sources.hippo-rag-vectore-store]
+workspace = true
+
+[tool.uv.sources.text-embedding]
+workspace = true
+
+[tool.uv.sources.llama-index-extension]
+workspace = true
+
+[tool.uv.sources.text-splitter]
+workspace = true
+
+[tool.uv.sources.openai-client]
+workspace = true

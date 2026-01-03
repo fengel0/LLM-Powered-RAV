@@ -1,0 +1,2 @@
+pytest tests/test_word_conversation.py
+pytest tests/test_execl_conversation.py

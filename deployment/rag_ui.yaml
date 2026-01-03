@@ -1,0 +1,62 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  simple-rag-api-v02:
+    image: simple-rag-api:v02
+    container_name: simple-rag-api-v02
+    restart: unless-stopped
+    ports:
+      - 7600:8000
+    networks:
+      - dev_env
+    environment:
+      TZ: Europe/Berlin
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      RAG_TYPE: "hippo-rag"
+      LLM_REQUEST_TIMEOUT: ${LLM_REQUEST_TIMEOUT}
+
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      RERANK_API_KEY: ${RERANK_API_KEY}
+
+      NEO4J_HOST: ${NEO4J_HOST}
+      NEO4J_USER: ${NEO4J_USER}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+
+      OPENAI_HOST: ${OPENAI_HOST}
+      #OPENAI_HOST: https://deepresearch-mokitul.ai.fh-erfurt.de/v1
+      #OPENAI_HOST: http://192.168.83.3:11434/v1
+      
+
+      QDRANT_HOST: ${QDRANT_HOST}
+      QDRANT_PORT: ${QDRANT_PORT}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      QDRANT_GRPC_PORT: ${QDRANT_GRPC_PORT}
+      QDRANT_PREFER_GRPC: ${QDRANT_PREFER_GRPC}
+      VECTOR_COLLECTION: ${VECTOR_COLLECTION}
+      VECTOR_BATCH_SIZE: ${VECTOR_BATCH_SIZE}
+
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      EMBEDDING_HOST: ${EMBEDDING_HOST}
+      IS_EMBEDDING_HOST_SECURE: ${IS_EMBEDDING_HOST_SECURE}
+      RERANK_HOST: ${RERANK_HOST}
+      DEFAULT_CONFIG: e93f83eb-d3ad-4211-ab88-fdf955ed0fa3
+      DEFAULT_LLM_MODEL: "gpt-oss:120b"
+      LLMS_AVAILABALE: "gpt-oss:120b,llama3.3,deepseek-r1:70b"
+      RUNNING_HOST: "https://we.ai.fh-erfurt.de"
+      PATH_PREFIX: "/chat-ui"
+      PORT: 8000
+      WORKERS: 1
+    volumes:
+      - ./chat_dump:/app/api/simple-rag-api/src/chat_dump
+

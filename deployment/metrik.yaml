@@ -1,0 +1,116 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  prometheus-v02:
+    image: prom/prometheus:latest
+    container_name: prometheus-masterarbeit-v02
+    user: root
+    networks:
+      - dev_env
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - $PWD/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./disks/prometheus-data-masterarbeit:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  grafana-v02:
+    image: grafana/grafana:latest
+    container_name: grafana-masterarbeit-v02
+    ports:
+      - 3000:3000
+    networks:
+      - dev_env
+    volumes:
+      - "$PWD/config/grafana.ini:/etc/grafana/grafana.ini"
+      - "$PWD/config/provisioning:/etc/grafana/provisioning"
+      - ./disks/grafana-data-masterarbeit:/var/lib/grafana
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  otel-collector-v02:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector-masterarbeit-v02
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "8888:8888"   # Collector's own metrics endpoint
+      - "8889:8889"   # Prometheus exporter endpoint
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+    networks:
+      - dev_env
+  tempo-v02:
+    image: grafana/tempo:latest
+    container_name: tempo-masterarbeit-v02
+    networks:
+      - dev_env
+    ports:
+      - "3200:3200"     # Tempo HTTP
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./config/tempo-config.yaml:/etc/tempo.yaml
+      - ./disks/tempo-data-masterarbeit:/var/tempo   # <-- Added persistent volume
+
+  loki-v02:
+    image: grafana/loki:latest
+    networks:
+      - dev_env
+    container_name: loki-masterarbeit-v02
+    ports:
+      - "3100:3100"     # Loki HTTP
+      - "9096:9096"     # Loki HTTP
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./config/loki-config.yaml:/etc/loki/config.yaml
+      - ./disks/loki-data-masterarbeit:/loki     
+
+  cadvisor-v02:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor-masterarbeit-v02
+    restart: always
+    networks:
+      - dev_env
+    volumes:
+      - "/:/rootfs:ro"
+      - "/sys:/sys:ro"
+      - "/var/run:/var/run:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  node-exporter-v02:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter-masterarbeit-v02
+    networks:
+      - dev_env
+    restart: unless-stopped
+    volumes:
+      - "/:/host:ro,rslave"
+    command:
+      - "--path.rootfs=/host"
+
+  dcgm-exporter-v02:
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.4.0-4.5.0-ubuntu22.04
+    command: ["-f", "/etc/dcgm-exporter/default-counters.csv"]
+    container_name: dcgm-exporter-masterarbeit-v02
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - "nvidia.com/gpu=all"
+    restart: unless-stopped
+    networks:
+      - dev_env
+

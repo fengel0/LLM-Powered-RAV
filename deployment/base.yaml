@@ -1,0 +1,15 @@
+services:
+  haproxy-ollama-v02:
+    image: haproxy:latest
+    container_name: haproxy-ollama-v02
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - "80:8080"  # HAProxy HTTP listener (debug only)
+      - "8404:8404"  # HAProxy stats + Prometheus exporter (optional)
+    volumes:
+      - ./config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+networks:
+  dev_env:
+    name: dev_env

@@ -1,0 +1,5 @@
+Query: {query_str}
+Context information for the Query is below.
+---------------------
+{context_str}
+---------------------

@@ -1,0 +1,20 @@
+{
+  "id": "15808103-12f5-4e38-b037-a57c15e85b34",
+  "stored_config": {
+    "id": "15808103-12f5-4e38-b037-a57c15e85b34",
+    "hash": "7f073cca69cd5b71559bcf0c826353b63e03f2be9801d9dc066ced2f57224bf0",
+    "chunk_size": 512,
+    "chunk_overlap": 128,
+    "models": {
+      "EMBEDDING_MODEL": "dummy",
+      "SPARSE_MODEL": "Qdrant/bm25"
+    },
+    "addition_information": {
+      "EMEDDING_NORMALIZE": true,
+      "TRUNCATE": true,
+      "TRUNCATE_DIRECTION": "right",
+      "EMBEDDING_DOC_PROMPT_NAME": "",
+      "EMBEDDING_QUERY_PROMPT_NAME": ""
+    }
+  }
+}

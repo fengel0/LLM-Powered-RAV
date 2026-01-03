@@ -1,0 +1,62 @@
+[project]
+name = "file-uploader-prefect"
+version = "0.2.0"
+description = ""
+authors = [
+    { name = "Fabian Engel", email = "git-fabian-engel@proton.me" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "s3==0.2.0",
+    "core==0.2.0",
+    "domain==0.2.0",
+    "database==0.2.0",
+    "file-database==0.2.0",
+    "project-database==0.2.0",
+    "file-uploader-service==0.2.0",
+    "prefect-core==0.2.0",
+    "deployment-base==0.2.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "testcontainers==4.13.2",
+    "domain-test==0.2.0",
+]
+
+[tool.uv.sources.s3]
+workspace = true
+
+[tool.uv.sources.core]
+workspace = true
+
+[tool.uv.sources.domain]
+workspace = true
+
+[tool.uv.sources.database]
+workspace = true
+
+[tool.uv.sources.file-database]
+workspace = true
+
+[tool.uv.sources.project-database]
+workspace = true
+
+[tool.uv.sources.file-uploader-service]
+workspace = true
+
+[tool.uv.sources.prefect-core]
+workspace = true
+
+[tool.uv.sources.domain-test]
+workspace = true
+
+[tool.uv.sources.deployment-base]
+workspace = true
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"

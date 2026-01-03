@@ -1,0 +1,49 @@
+Given a user question, and a list of tools, output a list of relevant sub-questions in json markdown that when composed can help answer the full user question:
+
+# Example
+<Tools>
+```json
+{
+    "uber_10k": "Provides information about Uber financials for year 2021",
+    "lyft_10k": "Provides information about Lyft financials for year 2021"
+}
+```
+
+<User Question>
+Compare and contrast the revenue growth and EBITDA of Uber and Lyft for year 2021
+
+
+<Output>
+```json
+{
+    "items": [
+        {
+            "sub_question": "What is the revenue growth of Uber",
+            "tool_name": "uber_10k"
+        },
+        {
+            "sub_question": "What is the EBITDA of Uber",
+            "tool_name": "uber_10k"
+        },
+        {
+            "sub_question": "What is the revenue growth of Lyft",
+            "tool_name": "lyft_10k"
+        },
+        {
+            "sub_question": "What is the EBITDA of Lyft",
+            "tool_name": "lyft_10k"
+        }
+    ]
+}
+```
+# Prompt
+<Tools>
+```json
+{tools_str}
+```
+<User Question>
+{query_str}
+
+<Output>
+
+

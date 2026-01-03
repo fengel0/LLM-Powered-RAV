@@ -1,0 +1,31 @@
+{
+  "include": ["src"],
+  "typeCheckingMode": "strict",
+  "reportMissingImports": true,
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "src/experimental",
+    "src/typestubs"
+  ],
+  "analysis": {
+    "diagnosticMode": "workspace"
+  },
+  "ignore": [],
+  "openFilesOnly": false,
+  "defineConstant": {
+    "DEBUG": true
+  },
+
+  "stubPath": "src/stubs",
+
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+
+  "executionEnvironments": [
+    {
+      "root": "src"
+    }
+  ]
+}
+

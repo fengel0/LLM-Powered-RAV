@@ -1,0 +1,24 @@
+{
+  "id": "b1b6e50f-5919-4ca0-9973-7a6c03dde716",
+  "stored_config": {
+    "id": "b1b6e50f-5919-4ca0-9973-7a6c03dde716",
+    "hash": "1fcb450b5e6ac1a5621d998f8f00e911cad8ebd901f982fa56bdf904d1b1be05",
+    "chunk_size": 1024,
+    "chunk_overlap": 128,
+    "models": {
+      "EMBEDDING_MODEL": "Qwen/Qwen3-Embedding-4B",
+      "OPENAI_MODEL": "gpt-oss:120b"
+    },
+    "addition_information": {
+      "EMEDDING_NORMALIZE": true,
+      "TRUNCATE": false,
+      "TRUNCATE_DIRECTION": "left",
+      "EMBEDDING_DOC_PROMPT_NAME": "document",
+      "EMBEDDING_QUERY_PROMPT_NAME": "query",
+      "TEMPERATUR": 0.0,
+      "EMBEDDING_SIZE": 2560,
+      "SYNONYME_EDEGE_TOP_N": 10,
+      "SYNONYMY_EDGE_SIM_THRESHOLD": 0.9
+    }
+  }
+}

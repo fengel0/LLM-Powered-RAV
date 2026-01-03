@@ -1,0 +1,24 @@
+networks:
+  dev_env-masterarbeit:
+    name: dev_env
+    external: true
+
+services:
+  text-embeddings-inference-embed:
+    image: ghcr.io/huggingface/text-embeddings-inference:1.7-grpc
+    container_name: text-embeddings-inference-embed-masterarbeit-v02
+    ports:
+      - "8080:80"
+      - "9999:9000"
+    networks:
+      - dev_env
+    devices:
+      - "nvidia.com/gpu=all"
+    volumes:
+      - ./disks/text-embeddings-inference-embed-data-masterarbeit:/data
+    environment:
+      OTLP_ENDPOINT: ${OTEL_HOST}
+      OTLP_SERVICE_NAME: "text-embeddings-inference-embed.server"
+      MODEL_ID: ${EMED_MODEL_ID}
+      HF_TOKEN: ${HF_TOKEN}
+      PROMETHEUS_PORT: 9000

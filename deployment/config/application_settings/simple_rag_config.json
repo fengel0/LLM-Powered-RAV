@@ -1,0 +1,43 @@
+{
+  "id": "c7bc8978-8a04-4cc3-932a-230b47fd1463",
+  "stored_config": {
+    "id": "c7bc8978-8a04-4cc3-932a-230b47fd1463",
+    "hash": "0203c840ab818bbcc4eb5f55641d2cc54300575b3d565775c0a3ba1a86fae5ac-5a32bd61a4bfaade1f62cad1c28fc9883a3545ed4bcbfae93c4d0ccf81302f60",
+    "name": "hyp-r20-1024-more-prompts",
+    "config_type": "hybrid",
+    "embedding": {
+      "id": "f1e39aa4-0195-48c1-a0b6-6e880dce7a34",
+      "hash": "0203c840ab818bbcc4eb5f55641d2cc54300575b3d565775c0a3ba1a86fae5ac",
+      "chunk_size": 1024,
+      "chunk_overlap": 128,
+      "models": {
+        "SPARSE_MODEL": "Qdrant/bm25",
+        "EMBEDDING_MODEL": "Qwen/Qwen3-Embedding-4B"
+      },
+      "addition_information": {
+        "TRUNCATE": false,
+        "EMEDDING_NORMALIZE": true,
+        "TRUNCATE_DIRECTION": "left",
+        "EMBEDDING_DOC_PROMPT_NAME": "document",
+        "EMBEDDING_QUERY_PROMPT_NAME": "query"
+      }
+    },
+    "retrieval_config": {
+      "id": "5e035c08-d09b-4e4d-9d9b-566901a4c8ad",
+      "hash": "5a32bd61a4bfaade1f62cad1c28fc9883a3545ed4bcbfae93c4d0ccf81302f60",
+      "generator_model": "deepseek-r1:70b",
+      "temp": 0.0,
+      "prompts": {
+        "SYSTEM_PROMPT": "You are a Retrieval-Augmented Generation assistant.\n\n## 1. Core Instructions\n1. Answer **only** with information that appears in the `CONTEXT` block provided with each user query.  \n2. If the context is insufficient, reply with  \n   “I’m sorry, I don’t have enough information in the provided documents to answer that.”  \n   (Optionally suggest a clarifying follow-up question.)  \n3. Never fabricate facts or sources.  \n4. Use the same language the user employs in their last message.  \n5. Think step-by-step, but show only the final answer to the user (no chain-of-thought).\n\n## 2. Citations\n- For every factual statement, include a citation in square brackets that points to the **index** of the document in the `CONTEXT` block, e.g. `[2]`.  \n- Cite at the **end of the sentence or bullet** to which the fact belongs.  \n- Never cite the same document multiple times in the same sentence.\n\n## 3. Answer Format\nRespond with exactly **one** of these templates:\n\n### 3.A  – When you have enough information\n```markdown\n**Answer**\n\n<concise, direct answer – paragraphs or bullets as suits the question>\n\n**Sources**\n\n- [1] <Document title or trimmed first 8 words>\n- [2] <Document title or trimmed first 8 words>\n",
+        "QUERY_WRAPPER_PROMPT": "Context information is below.\n---------------------\n{context_str}\n---------------------\nGiven the context information and not prior knowledge,\nanswer the query.\nQuery: {query_str}\nAnswer:\n",
+        "CONDENSE_QUESTON_PROMPT": "Given a conversation (between Human and Assistant) and a follow up message from Human, \\\nrewrite the message to be a standalone question that captures all relevant context \\\nfrom the conversation.\n\n<Chat History>\n{chat_history}\n\n<Follow Up Message>\n{question}\n\n<Standalone question>\n"
+      },
+      "addition_information": {
+        "RERANK_MODEL": "Qwen/Qwen3-Reranker-0.6B",
+        "TOP_N_COUNT_DENSE": 20,
+        "TOP_N_COUNT_SPARSE": 20,
+        "TOP_N_COUNT_RERANKER": 20
+      }
+    }
+  }
+}

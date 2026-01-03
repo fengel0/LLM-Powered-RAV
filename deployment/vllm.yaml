@@ -1,0 +1,59 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  #vllm-rerank-v02:
+    #image: vllm-cpu-env
+    #container_name: vllm-rerank-masterarbeit-v02
+    #networks:
+      #- dev_env
+    #command: >
+      #--model ${RERANK_MODEL_ID}
+      #--gpu-memory-utilization 0.45
+      #--max_model_len 37376
+      #--port 8002
+      #--task score
+      #--download-dir /models
+      #--quantization gguf
+      #--api-key ${VLLM_API_KEY}
+      #--no-enable-prefix-caching
+      #--no-enable-chunked-prefill
+    #environment:
+      #- HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+      #- TOKENIZERS_PARALLELISM=false
+    #ports:
+      #- "7998:8002"
+    #volumes:
+      #- ./disks/models:/models
+      #- ./disks/hf-cache:/root/.cache/huggingface
+
+    #devices:
+      #- "nvidia.com/gpu=all"
+  vllm-rerank-v02:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-rerank-masterarbeit-v02
+    networks:
+      - dev_env
+    command: >
+      --model ${RERANK_MODEL_ID}
+      --gpu-memory-utilization 0.40
+      --task score
+      --port 8002
+      --download-dir /models
+      --dtype bfloat16
+      --api-key ${VLLM_API_KEY}
+      --no-enable-chunked-prefill
+      --max-model-len 4096
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+    ports:
+      - "7998:8002"
+    volumes:
+      - ./disks/models:/models
+      - ./disks/hf-cache:/root/.cache/huggingface
+    devices:
+      - "nvidia.com/gpu=all"
+    # Or simply: gpus: all
+

@@ -1,0 +1,22 @@
+{
+  "id": "aeffaf4c-db27-490d-a8b7-bf22471bb8ec",
+  "stored_config": {
+    "id": "aeffaf4c-db27-490d-a8b7-bf22471bb8ec",
+    "hash": "945daca9dedacaa97395e07cc86fe3ecc1fe668d81c51e544a4294ee013d5ff5",
+    "generator_model": "deepseek-r1:70b",
+    "temp": 0.0,
+    "prompts": {
+      "SUB_SYSTEM_PROMPT": "You are a Retrieval-Augmented Generation assistant.\n\n## 1. Core Instructions\n1. Answer **only** with information that appears in the `CONTEXT` block provided with each user query.  \n2. If the context is insufficient, reply with  \n   “I’m sorry, I don’t have enough information in the provided documents to answer that.”  \n   (Optionally suggest a clarifying follow-up question.)  \n3. Never fabricate facts or sources.  \n4. Use the same language the user employs in their last message.  \n5. Think step-by-step, but show only the final answer to the user (no chain-of-thought).\n\n## 2. Citations\n- For every factual statement, include a citation in square brackets that points to the **index** of the document in the `CONTEXT` block, e.g. `[2]`.  \n- Cite at the **end of the sentence or bullet** to which the fact belongs.  \n- Never cite the same document multiple times in the same sentence.\n\n## 3. Answer Format\nRespond with exactly **one** of these templates:\n\n### 3.A  – When you have enough information\n```markdown\n**Answer**\n\n<concise, direct answer – paragraphs or bullets as suits the question>\n\n**Sources**\n\n- [1] <Document title or trimmed first 8 words>\n- [2] <Document title or trimmed first 8 words>\n",
+      "SUB_QUER_PROMPT": "Given a user question, and a list of tools, output a list of relevant sub-questions in json markdown that when composed can help answer the full user question:\n\n# Example\n<Tools>\n```json\n{\n    \"uber_10k\": \"Provides information about Uber financials for year 2021\",\n    \"lyft_10k\": \"Provides information about Lyft financials for year 2021\"\n}\n```\n\n<User Question>\nCompare and contrast the revenue growth and EBITDA of Uber and Lyft for year 2021\n\n\n<Output>\n```json\n{\n    \"items\": [\n        {\n            \"sub_question\": \"What is the revenue growth of Uber\",\n            \"tool_name\": \"uber_10k\"\n        },\n        {\n            \"sub_question\": \"What is the EBITDA of Uber\",\n            \"tool_name\": \"uber_10k\"\n        },\n        {\n            \"sub_question\": \"What is the revenue growth of Lyft\",\n            \"tool_name\": \"lyft_10k\"\n        },\n        {\n            \"sub_question\": \"What is the EBITDA of Lyft\",\n            \"tool_name\": \"lyft_10k\"\n        }\n    ]\n}\n```\n# Prompt\n<Tools>\n```json\n{tools_str}\n```\n<User Question>\n{query_str}\n\n<Output>\n\n\n",
+      "CONDENSE_QUESTON_PROMPT": "Given a conversation (between Human and Assistant) and a follow up message from Human, \\\nrewrite the message to be a standalone question that captures all relevant context \\\nfrom the conversation.\n\n<Chat History>\n{chat_history}\n\n<Follow Up Message>\n{question}\n\n<Standalone question>\n",
+      "QA_PROMPT": "Query: {query_str}\nContext information for the Query is below.\n---------------------\n{context_str}\n---------------------\n",
+      "QUERY_WRAPPER_PROMPT": "Context information is below.\n---------------------\n{context_str}\n---------------------\nGiven the context information and not prior knowledge,\nanswer the query.\nQuery: {query_str}\nAnswer:\n"
+    },
+    "addition_information": {
+      "RERANK_MODEL": "Qwen/Qwen3-Reranker-0.6B",
+      "TOP_N_COUNT_DENSE": 5,
+      "TOP_N_COUNT_SPARSE": 5,
+      "TOP_N_COUNT_RERANKER": 5
+    }
+  }
+}

@@ -1,0 +1,133 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+  grading-prefrect-openai-v02:
+    image: grading-prefect:v02
+    container_name: grading-prefrect-openai-masterarbeit-v02
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+
+      PARALLEL_REQUESTS: 1
+      EVAL_TYPE: "openai"
+
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TEMPERATUR: ${TEMPERATUR_GRADING}
+      PARALLEL_LLM_CALLS: 1
+      OPENAI_KEY: ${OPENAI_KEY}
+      LLM_REQUEST_TIMEOUT: ${LLM_REQUEST_TIMEOUT}
+
+      #OPENAI_HOST: ${OPENAI_HOST}
+      FACT_MODEL: ${FACT_MODEL}
+      MAX_TOKENS: 16384
+
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      PREFECT_API_URL: ${PREFECT_API_URL}
+    volumes:
+      - ./prompts:/app/api/grading-prefect/src/prompts
+      - ./config/application_settings/grading_config_openai.json:/app/api/grading-prefect/src/config/grading_config.json
+
+  grading-prefrect-local-deepseek-v02:
+    image: grading-prefect:v02
+    container_name: grading-prefrect-local-deepseek-masterarbeit
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+
+      PARALLEL_REQUESTS: ${PARALLEL_REQUESTS_EVAL}
+      EVAL_TYPE: "local"
+
+      LLM_REQUEST_TIMEOUT: ${LLM_REQUEST_TIMEOUT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TEMPERATUR: ${TEMPERATUR_GRADING}
+      PARALLEL_LLM_CALLS: ${PARALLEL_LLM_CALLS}
+      OPENAI_KEY: ${OPEN_ROUTER_KEY}
+
+      OPENAI_HOST: ${OPENAI_HOST}
+      FACT_MODEL: ${FACT_MODEL}
+      MAX_TOKENS: ${MAX_TOKENS}
+
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      PREFECT_API_URL: ${PREFECT_API_URL}
+    volumes:
+      - ./prompts:/app/api/grading-prefect/src/prompts
+      - ./config/application_settings/grading_config_local_deepseek.json:/app/api/grading-prefect/src/config/grading_config.json
+
+  grading-prefrect-local-llama-v02:
+    image: grading-prefect:v02
+    container_name: grading-prefrect-local-llama-masterarbeit
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      LLM_REQUEST_TIMEOUT: ${LLM_REQUEST_TIMEOUT}
+
+      PARALLEL_REQUESTS: ${PARALLEL_REQUESTS_EVAL}
+      EVAL_TYPE: "local"
+
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TEMPERATUR: ${TEMPERATUR_GRADING}
+      PARALLEL_LLM_CALLS: ${PARALLEL_LLM_CALLS}
+      OPENAI_KEY: ${OPEN_ROUTER_KEY}
+
+      OPENAI_HOST: ${OPENAI_HOST}
+      FACT_MODEL: ${FACT_MODEL}
+      MAX_TOKENS: ${MAX_TOKENS}
+
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      PREFECT_API_URL: ${PREFECT_API_URL}
+    volumes:
+      - ./prompts:/app/api/grading-prefect/src/prompts
+      - ./config/application_settings/grading_config_local_llama.json:/app/api/grading-prefect/src/config/grading_config.json
+
+
+  trigger-evaluation-prefrect-v02:
+    image: trigger-evaluation-prefect:v02
+    container_name: trigger-evaluation-prefrect-masterarbeit-v02
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+      PREFECT_API_URL: ${PREFECT_API_URL}

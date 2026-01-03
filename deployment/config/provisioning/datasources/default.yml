@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    url: 'http://prometheus-masterarbeit-v02:9090'
+  - name: Loki 
+    type: loki 
+    url: 'http://loki-masterarbeit-v02:3100'
+  - name: Tempo
+    type: tempo
+    url: 'http://tempo-masterarbeit-v02:3200'

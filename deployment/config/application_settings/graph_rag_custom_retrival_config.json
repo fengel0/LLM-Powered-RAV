@@ -1,0 +1,19 @@
+{
+  "id": "c3226cc0-3e3a-4e07-9a82-c2c1e6b8b0d5",
+  "stored_config": {
+    "id": "c3226cc0-3e3a-4e07-9a82-c2c1e6b8b0d5",
+    "hash": "7bc880713be20a7eac110b2b3ab73e808bbac7622fac797626085c9fd9da98c3",
+    "generator_model": "deepseek-r1:70b",
+    "temp": 0.0,
+    "prompts": {},
+    "addition_information": {
+      "TOP_N_HIPPO_RAG": 10,
+      "TOP_N_LINKINIG": 10,
+      "QA_TOP_N": 10,
+      "PASSAGE_NODE_WEIGHT": 0.3,
+      "DAMPING": 0.15,
+      "CHUNKS_TO_RETRIEVE_PPR_SEED": 100,
+      "PPR_DIRECTED": "False"
+    }
+  }
+}

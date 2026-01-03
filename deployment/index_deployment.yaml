@@ -1,0 +1,76 @@
+networks:
+  dev_env:
+    name: dev_env
+    external: true
+
+services:
+
+  file-index-vector-prefrect-v02:
+    image: file-index-prefect:v02
+    container_name: file-index-prefrect-vector-masterarbeit-v02
+    restart: unless-stopped
+    networks:
+      - dev_env
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_SECRETS: ${LOG_SECRETS}
+      PARALLEL_REQUESTS: ${PARALLEL_REQUESTS_VECTOR_EMBEDDING}
+
+      OBSERVE_DIR: ${OBSERVE_DIR}
+      FILE_TYPES_TO_OBSERVE: ${FILE_TYPES_TO_OBSERVE}
+      FILE_CONVERTER_API: ${FILE_CONVERTER_API}
+
+      # S3 Configuration
+      S3_HOST: ${S3_HOST}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_SESSION_KEY: ${S3_SESSION_KEY}
+      S3_IS_SECURE: ${S3_IS_SECURE}
+
+      # MongoDB
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      CHUNK_SIZE: ${CHUNK_SIZE}
+      CHUNK_OVERLAB: ${CHUNK_OVERLAB}
+
+      # OpenTelemetry
+      OTEL_HOST: ${OTEL_HOST}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      OTEL_INSECURE: ${OTEL_INSECURE}
+
+      # Qdrant Vector DB
+      QDRANT_HOST: ${QDRANT_HOST}
+      QDRANT_PORT: ${QDRANT_PORT}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      QDRANT_GRPC_PORT: ${QDRANT_GRPC_PORT}
+      QDRANT_PREFER_GRPC: ${QDRANT_PREFER_GRPC}
+      VECTOR_COLLECTION: ${VECTOR_COLLECTION}
+      VECTOR_BATCH_SIZE: ${VECTOR_BATCH_SIZE}
+
+      EMBEDDING_IMPLEMENTATION: vector
+      EMBEDDING_SIZE: ${EMBEDDING_SIZE}
+
+      EMEDDING_NORMALIZE: ${EMEDDING_NORMALIZE}
+      TRUNCATE: ${TRUNCATE}
+      TRUNCATE_DIRECTION: ${TRUNCATE_DIRECTION}
+      DOCUMENT_LANGUAGE: ${DOCUMENT_LANGUAGE}
+
+      EMBEDDING_DOC_PROMPT_NAME: ${EMBEDDING_DOC_PROMPT_NAME}
+      EMBEDDING_QUERY_PROMPT_NAME: ${EMBEDDING_QUERY_PROMPT_NAME}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL}
+      SPARSE_MODEL: ${SPARSE_MODEL}
+      # LLMs
+      EMBEDDING_HOST: ${EMBEDDING_HOST}
+      IS_EMBEDDING_HOST_SECURE: ${IS_EMBEDDING_HOST_SECURE}
+      RERANK_HOST: ${RERANK_HOST}
+
+
+      # Prefect
+      PREFECT_API_URL: ${PREFECT_API_URL}
+    volumes:
+      - ./config/application_settings/embedding_config_simple.json:/app/api/file-index-prefect/src/config/embedding_config.json
+      - ./files:/app/api/file-index-prefect/src/files
+      - ./prompts:/app/api/file-index-prefect/src/prompts

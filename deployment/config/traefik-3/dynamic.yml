@@ -1,0 +1,27 @@
+http:
+  routers:
+    runpod-router:
+      entryPoints: ["web"]
+      rule: 'PathPrefix(`/`)'   # match everything
+      service: "runpod-service"
+
+  services:
+    runpod-service:
+      loadBalancer:
+        servers:
+          #- url: "https://k5if6ct2b2vcap-11434.proxy.runpod.net:443"
+          - url: "https://n219li2o7n60hr-11434.proxy.runpod.net:443"
+        passHostHeader: false
+        serversTransport: "runpod-transport"
+        healthCheck:
+          scheme: "https"
+          path: "/"
+          interval: "10s"
+          timeout: "3s"
+          headers:
+            Host: "n219li2o7n60hr-11434.proxy.runpod.net"
+
+  serversTransports:
+    runpod-transport:
+      serverName: "n219li2o7n60hr-11434.proxy.runpod.net"
+      insecureSkipVerify: false   # only set true if the upstream cert is invalid/self-signed
